@@ -1,34 +1,15 @@
 
-var lat = 10.37;
-var lng = 50.09;
+var lat = 0.00;
+var lng = 0.00;
 
-// Check if geolocation is supported by the browser
-if ("geolocation" in navigator) {
-    // Prompt user for permission to access their location
-    navigator.geolocation.getCurrentPosition(
-        // Success callback function
-        (position) => {
-            // Get the user's latitude and longitude coordinates
-            lat = position.coords.latitude;
-            lng = position.coords.longitude;
+var apiKey = 'c890d0ab724b62056e06a89cdd664e91'; //apikey for weatherapi
 
-            // Do something with the location data, e.g. display on a map
-            console.log(`Latitude: ${lat}, longitude: ${lng}`);
-        },
-        // Error callback function
-        (error) => {
-            // Handle errors, e.g. user denied location sharing permissions
-            console.error("Error getting user location:", error);
-        }
-    );
-} else {
-    // Geolocation is not supported by the browser
-    console.error("Geolocation is not supported by this browser.");
-}
-
-var apiKey = 'c890d0ab724b62056e06a89cdd664e91';
+var locationiqKey = "pk.ec0cf909011e86f4f3f767652a52aaa8" // access token for LocationIQ
 
 var jsonApiData = {};
+
+var tempMain = document.getElementById("tempMain");
+var feelsLike = document.getElementById("feelsLike");
 
 //array to match filename with response icon code
 var fileName = "";
@@ -52,11 +33,95 @@ let dictIcons = [
     { name: "13n", value: "mist.svg" },
 ];
 
-setTimeout(getWeatherDataApiCall,2000)
+$('#search-box-input').autocomplete({
+    minChars: 3,
+    deferRequestBy: 250,
+    serviceUrl: 'https://api.locationiq.com/v1/autocomplete',
+    paramName: 'q',
+    params: {
+      // The input parameters to the API goes here
+      key: locationiqKey,
+      format: "json",
+      limit: 5
+    },
+    ajaxSettings: {
+      dataType: 'json'
+    },
+    formatResult: function(suggestion, currentValue) {
+      // Current value is the input query. We can use this to highlight the search phrase in the result
+      var format = "<div class='autocomplete-suggestion-name'>" + highlight(suggestion.data.display_place, currentValue) + "</div>" +
+        "<div class='autocomplete-suggestion-address'>" + highlight(suggestion.data.display_address, currentValue) + "</div>"
+      return format;
+    },
+    transformResult: function(response) {
+      var suggestions = $.map(response, function(dataItem) {
+        return {
+          value: dataItem.display_name,
+          data: dataItem
+        };
+      })
+
+      return {
+        suggestions: suggestions
+      };
+    },
+    onSelect: function(suggestion) {
+      //displayLatLon(suggestion.data.display_name, suggestion.data.lat, suggestion.data.lon);
+      lat = suggestion.data.lat;
+      lng = suggestion.data.lat;
+      getWeatherDataApiCall();
+    }
+  });
+
+  function highlight(text, focus) {
+    var r = RegExp('(' + escapeRegExp(focus) + ')', 'gi');
+    return text.replace(r, '<strong>$1</strong>');
+  }
+
+  function escapeRegExp(str) {
+    return str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
+  }
+
+
+
+if (localStorage.getItem("lat") == '' || localStorage.getItem("lat") == null || localStorage.getItem("lng") == '' || localStorage.getItem("lng") == null) {
+    // Check if geolocation is supported by the browser
+    if ("geolocation" in navigator) {
+        // Prompt user for permission to access their location
+        navigator.geolocation.getCurrentPosition(
+            // Success callback function
+            (position) => {
+                // Get the user's latitude and longitude coordinates
+                lat = position.coords.latitude;
+                lng = position.coords.longitude;
+                localStorage.setItem("lat", lat);
+                localStorage.setItem("lng", lng);
+                localStorage.setItem("position", position);
+
+                // Do something with the location data, e.g. display on a map
+                console.log(`Latitude: ${lat}, longitude: ${lng}`);
+                location.reload();
+            },
+            // Error callback function
+            (error) => {
+                // Handle errors, e.g. user denied location sharing permissions
+                console.error("Error getting user location:", error);
+            }
+        );
+    } else {
+        // Geolocation is not supported by the browser
+        console.error("Geolocation is not supported by this browser.");
+    }
+}
+else {
+    lat = localStorage.getItem("lat");
+    lng = localStorage.getItem("lng");
+}
+
+
+setTimeout(getWeatherDataApiCall, 0)
 //getWeatherDataApiCall();
 
-var tempMain = document.getElementById("tempMain");
-var feelsLike = document.getElementById("feelsLike");
 
 function getWeatherDataApiCall() {
 
