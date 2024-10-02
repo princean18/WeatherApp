@@ -334,12 +334,12 @@ only screen and (min-resolution: 1.25dppx) {
 }
 
 
-#search-box {
+/* #search-box {
   padding-left: 20px;
   padding-top: 20px;
   width: 400px;
   height: 100px;
-}
+} */
 
 #result {
   padding-left: 20px;
