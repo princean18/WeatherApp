@@ -125,24 +125,47 @@ setTimeout(getWeatherDataApiCall, 0)
 
 function getWeatherDataApiCall() {
 
-    fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lng + '&appid=' + apiKey)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response error');
-            }
-            return response.json();
-        })
-        .then(data => {
-            jsonApiData = data;
-            console.log(jsonApiData);
-            tempMain.innerHTML = Math.floor(jsonApiData.main.temp - 273.15) + "&deg;C";
-            feelsLike.innerHTML = "Feels like " + Math.floor(jsonApiData.main.feels_like - 273.15) + "&deg;C";
-            fileName = dictIcons.find(o => o.name === jsonApiData.weather[0].icon).value;
-            //console.log(fileName);
-            document.getElementById("weatherIcon").src = "assets/icons/animated/" + fileName;
+  var weatherApiUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lng + '&appid=' + apiKey;
+  var forecatApiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lng + '&appid=' + apiKey;
 
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
+  dataService(weatherApiUrl).then((data) => {
+    jsonApiData = data;
+    //console.log(jsonApiData);
+    tempMain.innerHTML = Math.floor(jsonApiData.main.temp - 273.15) + "&deg;C";
+    feelsLike.innerHTML = "Feels like " + Math.floor(jsonApiData.main.feels_like - 273.15) + "&deg;C";
+    fileName = dictIcons.find(o => o.name === jsonApiData.weather[0].icon).value;
+    //console.log(fileName);
+    document.getElementById("weatherIcon").src = "assets/icons/animated/" + fileName;
+  });
+
+  dataService(forecatApiUrl).then((data) => {
+    //jsonApiData = data;
+    console.log(data.list[0].weather[0].icon);
+    var i =0;
+    var forcastDayInnerHtml = "";
+    while(i<data.list.length){
+      if(new Date(data.list[i].dt_txt).getHours()==12){
+        console.log(new Date(data.list[i].dt_txt));
+        forcastDayInnerHtml = forcastDayInnerHtml+"<div class='col'><div class='p-3 rounded-4 border-0 bg-white'> "+new Date(data.list[i].dt_txt).toLocaleDateString("en-GB", { weekday: 'long' })+"<br> <img src='assets/icons/animated/"+dictIcons.find(o => o.name === data.list[i].weather[0].icon).value+"' width='50'><p class='display-10'>"+Math.floor(data.list[i].main.temp- 273.15)+"&deg;C</p></div></div>";
+        document.getElementById('forcastDays').innerHTML = forcastDayInnerHtml;
+      }
+      i++;
+    }
+    console.log(new Date(data.list[data.list.length-1].dt_txt));
+    
+  });
+
+  
+}
+
+async function dataService(url) {
+  try{
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error('Network response error');
+    }
+    return res.json();
+  }catch(err) {
+    console.error('Fetch error:', error);
+  }
 }
