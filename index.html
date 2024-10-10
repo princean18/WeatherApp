@@ -15,6 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+    <script src="https://kit.fontawesome.com/c6793b6098.js" crossorigin="anonymous"></script>
 
 </head>
 
@@ -25,7 +26,7 @@
                 <div style="height: auto;" class="p-4 pt-5">
                     <div class="row">
                         <input class="p-2 rounded-5 border-0 locationInput" id="search-box-input" title="Search"
-                                    placeholder="Search for places...">
+                            placeholder="Search for places...">
                         <div class="align-items-center">
                             <img id="weatherIcon" src="assets/icons/animated/cloudy-day-1.svg" alt="" width="250">
                         </div>
@@ -39,13 +40,54 @@
             </div>
             <div class="col-lg-9">
                 <div style="height: auto;" class="p-4 pt-5">
-                    <div class="container  text-center">
-                        <div class="row " id="forcastDays">
-                            
-                        </div>
-                        <div class="row">
+                    <div class="container ">
+                        <p><b>Forecast</b></p>
+                        <div class="row  text-center" id="forcastDays">
 
                         </div>
+                        <div class="row pt-2">
+                            <p><b>Today's Highlights</b></p>
+                            <div class="col  text-center">
+                                <div class="p-2 rounded-4 border-0 bg-white text-muted"> Wind Status<br>
+                                    <img src="assets/icons/static/directional.svg" id="windDirImg" width="20">
+                                    <p id="windSpeed"></p>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="p-2 rounded-4 border-0 bg-white text-muted"> Sunrise & Sunset<br>
+                                    <label id="sunrise"></label>
+                                    <p id="sunset"></p>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="p-2 rounded-4 border-0 bg-white text-muted"> Visibility<br>
+                                    <i class='fa-solid fa-eye'></i>
+                                    <p class="display-10" id="visibility">11°C</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col  text-center">
+                                <div class="p-2 rounded-4 border-0 bg-white text-muted"> Pressure<br>
+                                    <i class="fa-solid fa-temperature-three-quarters"></i>
+                                    <p class="display-10" id="pressure">0 hPa</p>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="p-2 rounded-4 border-0 bg-white text-muted"> Humidity<br>
+                                    <i class="fa-solid fa-bars-staggered"></i>
+                                    <p class="display-10" id="humidity">0 %</p>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="p-2 rounded-4 border-0 bg-white text-muted">Pressure<br>
+                                    <label id="sealevel"></label>
+                                    <p id="grndlevel"></p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
