@@ -9,7 +9,8 @@ var locationiqKey = "pk.ec0cf909011e86f4f3f767652a52aaa8" // access token for Lo
 var jsonApiData = {};
 
 var tempMain = document.getElementById("tempMain");
-var feelsLike = document.getElementById("feelsLike");
+var feelsLikeMinMax = document.getElementById("feelsLikeMinMax");
+var weatherDesc = document.getElementById("weatherDesc");
 
 //array to match filename with response icon code
 var fileName = "";
@@ -120,8 +121,6 @@ else {
 
 
 setTimeout(getWeatherDataApiCall, 0)
-//getWeatherDataApiCall();
-
 
 function getWeatherDataApiCall() {
 
@@ -129,33 +128,33 @@ function getWeatherDataApiCall() {
   var forecatApiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lng + '&appid=' + apiKey;
 
   dataService(weatherApiUrl).then((data) => {
-    jsonApiData = data;
-    //console.log(jsonApiData);
-    tempMain.innerHTML = Math.floor(jsonApiData.main.temp - 273.15) + "&deg;C";
-    feelsLike.innerHTML = "Feels like " + Math.floor(jsonApiData.main.feels_like - 273.15) + "&deg;C";
-    fileName = dictIcons.find(o => o.name === jsonApiData.weather[0].icon).value;
-    //console.log(fileName);
+    console.log(data);
+    tempMain.innerHTML = convertToDeg(data.main.temp);
+    feelsLikeMinMax.innerHTML = "Feels like " + convertToDeg(data.main.feels_like)+"<br> Lo: "+ convertToDeg(data.main.temp_min)+" - Hi: "+convertToDeg(data.main.temp_max);
+    weatherDesc.innerHTML = data.weather[0].main+", "+ data.weather[0].description;
+    fileName = dictIcons.find(o => o.name === data.weather[0].icon).value;
     document.getElementById("weatherIcon").src = "assets/icons/animated/" + fileName;
   });
 
   dataService(forecatApiUrl).then((data) => {
-    //jsonApiData = data;
-    console.log(data.list[0].weather[0].icon);
     var i =0;
     var forcastDayInnerHtml = "";
     while(i<data.list.length){
-      if(new Date(data.list[i].dt_txt).getHours()==12){
-        console.log(new Date(data.list[i].dt_txt));
-        forcastDayInnerHtml = forcastDayInnerHtml+"<div class='col'><div class='p-3 rounded-4 border-0 bg-white'> "+new Date(data.list[i].dt_txt).toLocaleDateString("en-GB", { weekday: 'long' })+"<br> <img src='assets/icons/animated/"+dictIcons.find(o => o.name === data.list[i].weather[0].icon).value+"' width='50'><p class='display-10'>"+Math.floor(data.list[i].main.temp- 273.15)+"&deg;C</p></div></div>";
+      if(new Date(data.list[i].dt_txt).getHours()==12 && i!=0){
+        forcastDayInnerHtml = forcastDayInnerHtml+"<div class='col'><div class='p-3 rounded-4 border-0 bg-white'> "+new Date(data.list[i].dt_txt).toLocaleDateString("en-GB", { weekday: 'long' })+"<br> <img src='assets/icons/animated/"+dictIcons.find(o => o.name === data.list[i].weather[0].icon).value+"' width='50'><p class='display-10'>"+convertToDeg(data.list[i].main.temp)+"</p></div></div>";
         document.getElementById('forcastDays').innerHTML = forcastDayInnerHtml;
       }
       i++;
     }
-    console.log(new Date(data.list[data.list.length-1].dt_txt));
+    //to display last day forecast
+    // forcastDayInnerHtml = forcastDayInnerHtml+"<div class='col'><div class='p-3 rounded-4 border-0 bg-white'> "+new Date(data.list[data.list.length-1].dt_txt).toLocaleDateString("en-GB", { weekday: 'long' })+"<br> <img src='assets/icons/animated/"+dictIcons.find(o => o.name === data.list[data.list.length-1].weather[0].icon).value+"' width='50'><p class='display-10'>"+convertToDeg(data.list[data.list.length-1].main.temp)+"</p></div></div>";
+    document.getElementById('forcastDays').innerHTML = forcastDayInnerHtml;
     
   });
+}
 
-  
+function convertToDeg(val){
+  return Math.floor(val - 273.15)+"&deg;C";
 }
 
 async function dataService(url) {
