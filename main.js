@@ -78,7 +78,7 @@ $('#search-box-input').autocomplete({
   onSelect: function (suggestion) {
     //displayLatLon(suggestion.data.display_name, suggestion.data.lat, suggestion.data.lon);
     lat = suggestion.data.lat;
-    lng = suggestion.data.lat;
+    lng = suggestion.data.lon;
     getWeatherDataApiCall();
   }
 });
