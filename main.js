@@ -41,6 +41,7 @@ let dictIcons = [
   { name: "11n", value: "thunder.svg" },
   { name: "13d", value: "mist.svg" },
   { name: "13n", value: "mist.svg" },
+  { name: "50d", value: "mist.svg" },
 ];
 
 $('#search-box-input').autocomplete({
@@ -142,6 +143,9 @@ function getWeatherDataApiCall() {
     feelsLikeMinMax.innerHTML = "Feels like " + convertToDeg(data.main.feels_like) + "<br> Lo: " + convertToDeg(data.main.temp_min) + " - Hi: " + convertToDeg(data.main.temp_max);
     weatherDesc.innerHTML = data.weather[0].main + ", " + data.weather[0].description;
     fileName = dictIcons.find(o => o.name === data.weather[0].icon).value;
+    if(fileName==undefined){
+      fileName = "day.svg";
+    }
     document.getElementById("weatherIcon").src = "assets/icons/animated/" + fileName;
 
     windSpeed.innerHTML = data.wind.speed + " m/s";
