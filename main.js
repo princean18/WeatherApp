@@ -127,10 +127,18 @@ if (localStorage.getItem("lat") == '' || localStorage.getItem("lat") == null || 
 else {
   lat = localStorage.getItem("lat");
   lng = localStorage.getItem("lng");
+
+  var reverseLocationUrl = 'https://us1.locationiq.com/v1/reverse?key='+locationiqKey+'&lat='+lat+'&lon='+lng+'&format=json';
+
+  dataService(reverseLocationUrl).then((data) => {
+    console.log(data);
+    document.getElementById('search-box-input').value = data.display_name;
+  });
 }
 
 
-setTimeout(getWeatherDataApiCall, 0)
+
+getWeatherDataApiCall();
 
 function getWeatherDataApiCall() {
 
