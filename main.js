@@ -8,8 +8,10 @@ var locationiqKey = "pk.ec0cf909011e86f4f3f767652a52aaa8" // access token for Lo
 
 var jsonApiData = {};
 
+var locationText = document.getElementById("locationText");
 var tempMain = document.getElementById("tempMain");
 var feelsLikeMinMax = document.getElementById("feelsLikeMinMax");
+var tempMinMax = document.getElementById("tempMinMax");
 var weatherDesc = document.getElementById("weatherDesc");
 var pressure = document.getElementById("pressure");
 var humidity = document.getElementById("humidity");
@@ -80,6 +82,8 @@ $('#search-box-input').autocomplete({
     //displayLatLon(suggestion.data.display_name, suggestion.data.lat, suggestion.data.lon);
     lat = suggestion.data.lat;
     lng = suggestion.data.lon;
+    document.getElementById('search-box-input').value = "";
+    locationText.innerHTML ="<i class='fa-solid fa-location-dot'></i> "+suggestion.data.display_name;
     getWeatherDataApiCall();
   }
 });
@@ -110,7 +114,7 @@ if (localStorage.getItem("lat") == '' || localStorage.getItem("lat") == null || 
         localStorage.setItem("position", position);
 
         // Do something with the location data, e.g. display on a map
-        console.log(`Latitude: ${lat}, longitude: ${lng}`);
+        //console.log(`Latitude: ${lat}, longitude: ${lng}`);
         location.reload();
       },
       // Error callback function
@@ -131,8 +135,9 @@ else {
   var reverseLocationUrl = 'https://us1.locationiq.com/v1/reverse?key='+locationiqKey+'&lat='+lat+'&lon='+lng+'&format=json';
 
   dataService(reverseLocationUrl).then((data) => {
-    console.log(data);
-    document.getElementById('search-box-input').value = data.display_name;
+    //console.log(data);
+    //document.getElementById('search-box-input').value = data.display_name;
+    locationText.innerHTML ="<i class='fa-solid fa-location-dot'></i> "+data.display_name;
   });
 }
 
@@ -146,10 +151,16 @@ function getWeatherDataApiCall() {
   var forecatApiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lng + '&appid=' + apiKey;
 
   dataService(weatherApiUrl).then((data) => {
-    console.log(data);
-    tempMain.innerHTML = convertToDeg(data.main.temp);
-    feelsLikeMinMax.innerHTML = "Feels like " + convertToDeg(data.main.feels_like) + "<br> Lo: " + convertToDeg(data.main.temp_min) + " - Hi: " + convertToDeg(data.main.temp_max);
-    weatherDesc.innerHTML = data.weather[0].main + ", " + data.weather[0].description;
+    //console.log(data);
+    tempMain.innerHTML = convertToDeg(data.main.temp);    
+    feelsLikeMinMax.innerHTML = "Feels like " + convertToDeg(data.main.feels_like);
+    if(data.weather[0].main.toLowerCase() == data.weather[0].description.toLowerCase()){
+      weatherDesc.innerHTML = data.weather[0].main;
+    }else{
+      weatherDesc.innerHTML = data.weather[0].main + ", " + data.weather[0].description;
+    }
+    tempMinMax.innerHTML = "<i class='text-muted fas fa-arrow-alt-circle-down'></i> " + convertToDeg(data.main.temp_min) + "  <i class='text-muted fas fa-arrow-alt-circle-up'></i> " + convertToDeg(data.main.temp_max);
+    
     fileName = dictIcons.find(o => o.name === data.weather[0].icon).value;
     if(fileName==undefined){
       fileName = "day.svg";
