@@ -14,3 +14,5 @@ Simple weather data application for users to search for weather information base
 4. **Link to Application**: [Weather App](https://princean18.github.io/WeatherApp/)
 
 This combination of APIs enables a seamless experience for users to access accurate and timely weather data based on their chosen locations.
+
+![image](https://github.com/user-attachments/assets/ca3b6a50-a7ab-4581-92f6-efe5ec114d2a)
